@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getCompanySales, getProductSalesByProduct } from '../../services/salesService';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
-    Box, Grid, Card, CardContent, CardActions, Typography, IconButton, Paper, Divider, TableRow, TableBody, TableCell, Stack
+    Box, Grid, Card, CardContent, Typography, Paper, TableRow, TableBody, TableCell, Stack
 } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
@@ -42,7 +42,7 @@ function SalesView(props) {
   const navigate = useNavigate();
   const [salesList, setSalesList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [salesPerPage, setSalesPerPage] = useState(5);
+  const [salesPerPage] = useState(5);
   let today = new Date();
   const [startDate, setStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()));
   const [searchedStartDate, setSearchedStartDate] = useState(startDate);
@@ -65,13 +65,19 @@ function SalesView(props) {
   useEffect(() => {
     const asyncFunction = async () =>{
         const tokenValid = await isATokenValid();
-        if(!tokenValid){
+        if(tokenValid){
+          fetchFullScreenData();
+        } else {
           removeLocalStorage();
           navigate("/signIn");
         }
     }
     asyncFunction();
   }, []);
+
+  useEffect(() => {
+    fetchPaginationData();
+  }, [currentPage]);
   
   const [paginationError, setPaginationError] = useState(null);
 
@@ -128,21 +134,15 @@ function SalesView(props) {
   }
 
   let handlePrevious = async () => {
-    setCurrentPage(currentPage - 1)
-    await fetchPaginationData()
+    await setCurrentPage(currentPage - 1);
   }
 
   let handleNext = async () => {
-    setCurrentPage(currentPage + 1)
-    await fetchPaginationData()
+    await setCurrentPage(currentPage + 1);
   }
   let itemIndex = 0
 
   const options = {}
-
-  useEffect(() => {
-    fetchFullScreenData();
-  }, []);
 
   return (
     <Paper sx={{ m: 3, p: 2 }}>
@@ -302,7 +302,7 @@ function SalesView(props) {
           <Box>
             {/* Total count component */}
             <Typography variant="h6" component="h1" sx={{ py: 2 }}>
-              Page: {totalCount == 0 ? 0 : currentPage}/{Math.ceil(totalCount/salesPerPage)}
+              Page: {totalCount === 0 ? 0 : currentPage}/{Math.ceil(totalCount/salesPerPage)}
             </Typography>
             <Typography variant="h6" component="h1" sx={{ py: 2 }}>
               Items per Page: {salesPerPage}
