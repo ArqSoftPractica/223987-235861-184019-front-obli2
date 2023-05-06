@@ -1,0 +1,14 @@
+version: "3"
+services:
+  frontend:
+    build: .
+    ports:
+      - "3001:3000"
+    environment:
+      REACT_APP_REGION: 'us-east-1'
+      REACT_APP_BUCKET_NAME: 's3-asp-jodus-ellis-reyes'
+      REACT_APP_ACCESS_KEY_ID: 'ASIA4KPQV4G4C57KI6IT'
+      REACT_APP_SECRET_ACCESS_KEY: '6QHCVVCBbrPdomITN8gAgIyg9WbEeb7mcArXPJDU'
+      REACT_APP_AWS_TOKEN: 'FwoGZXIvYXdzELr//////////wEaDPT0Ds6loKDD9Y/3yiK+AVGmPQIkzt1zlURkb7yHbWBFZKcNE2/ts1acpK8SkrO7wXRCYHxgNR+A172VA3B8goF7+O2KWo6d8n8HZldtYnEsvoeO+4fQxxcBuoKM8ukdihhgLXFpqOKibRRN2w0G4zEhUYnt9MxpvGA7z4Qm0U7KzzLg9Xf2vgawBRic/9LL3h/g5GFqNhFV9vqJ03aTn+uFREgSjKAsFOyNC3wqF0xzkaW8Gbuc4kRqieBkMcSnXOVy+G5I+X1Fez0bEQgolcLBogYyLSse8G4FGBVguaOwfkQnrBXHtl5anD13MyI9Nl7fq4GQemOgyt+xznIWKVcwyg=='
+      REACT_APP_BACKEND_URL: 'http://localhost:3000'
+    command: npm start
