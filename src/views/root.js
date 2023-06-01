@@ -7,6 +7,7 @@ import Menu from '@mui/material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
 import { getUser, isUserLogged } from '../utils';
+import { sendReport } from '../services/userService';
 
 function Root() {
   const [userLogged, setUserLogged] = useState(false);
@@ -135,6 +136,7 @@ function Root() {
                   onClose={handleClose}
                 >
                   <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+                  <MenuItem onClick={async () => { handleClose(); await sendReport();}}>Receive company report</MenuItem>
                 </Menu>
               </div>
               </Toolbar>
