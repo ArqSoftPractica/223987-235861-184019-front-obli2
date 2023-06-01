@@ -81,3 +81,13 @@ export async function isATokenValid() {
         return false;
     }
 }
+
+export async function sendReport(companyId, token, onSuccess = null, onError = null) {
+    try{
+        const companyId = getUser()?.companyId
+        const response = await axios.post(`/reports/${companyId}`);
+        onSuccess && onSuccess(response.data);
+    } catch (error) {
+        executeError(onError, error);
+    }
+}
