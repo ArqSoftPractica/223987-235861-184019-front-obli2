@@ -11,11 +11,12 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Stack from '@mui/material/Stack';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import UnsubscribeIcon from '@mui/icons-material/Unsubscribe';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import {
   StyledHeader,
   formVariants
 } from '../../themes/componentsStyles';
-import { Grid } from '@mui/material';
+import { Grid, Tooltip } from '@mui/material';
 import { getProduct, getSuscribeUserProduct, suscribeUserProduct, unsuscribeUserProduct } from '../../services/productService';
 import { isATokenValid } from '../../services/userService';
 import { removeLocalStorage } from '../../utils';
@@ -43,7 +44,7 @@ function ViewProduct() {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({ type: 'success', message: null });
   const [product, setProduct] = useState(null);
-  const [userSubscribed, setUserSubscribed] = useState(false);
+  const userSubscribed = useRef(null);
   const productId = useLoaderData();
   const [file, setFile] = useState({ name: "Please select"});
 
@@ -70,21 +71,21 @@ function ViewProduct() {
     }, (error) => setAlert({ type: 'error', message: error }));
 
     const response = await getSuscribeUserProduct(productId);
-    setUserSubscribed(response);
+    userSubscribed.current = response;
   }
 
-  const unsuscribeUserProductFunction = async () => {
+  const unsuscribeUserProductFunction = async (productBought = userSubscribed.current?.productBought, productSold = userSubscribed.current?.productSold, noStock = userSubscribed.current?.noStock) => {
     setAlert({ type: 'success', message: "Unsuscribe successfully" });
-    await unsuscribeUserProduct(productId);
+    await suscribeUserProduct(productId, productBought, productSold, noStock);
     const response = await getSuscribeUserProduct(productId);
-    setUserSubscribed(response);
+    userSubscribed.current = response;
   }
 
-  const suscribeUserProductFunction = async () => {
+  const suscribeUserProductFunction = async (productBought = userSubscribed.current?.productBought, productSold = userSubscribed.current?.productSold, noStock = userSubscribed.current?.noStock) => {
     setAlert({ type: 'success', message: "Suscribe successfully" });
-    await suscribeUserProduct(productId);
+    await suscribeUserProduct(productId, productBought, productSold, noStock);
     const response = await getSuscribeUserProduct(productId);
-    setUserSubscribed(response);
+    userSubscribed.current = response;
   }
 
   return (
@@ -107,15 +108,34 @@ function ViewProduct() {
       >
         <StyledForm theme={theme} component="form">
           <Grid direction='row' container spacing={1} justifyContent="flex-end">
-            {!userSubscribed && 
-              <IconButton aria-label="delete" size="medium" onClick={async () =>  await suscribeUserProductFunction()}>
-                <SubscriptionsIcon fontSize="inherit" />
-              </IconButton>
+            {(!userSubscribed.current || !userSubscribed.current.productBought) && 
+              <Tooltip title='Subscribe to purchases and sales'>
+                <IconButton aria-label="delete" size="medium" onClick={async () =>  await suscribeUserProductFunction(true, true)}>
+                  <SubscriptionsIcon fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
             }
-            {userSubscribed && 
-              <IconButton aria-label="delete" size="medium" onClick={async () =>  await unsuscribeUserProductFunction()}>
-                <UnsubscribeIcon fontSize="inherit" />
-              </IconButton>
+            {userSubscribed.current && userSubscribed.current.productBought && 
+              <Tooltip title='Unsubscribe to purchases and sales'>
+                <IconButton aria-label="delete" size="medium" onClick={async () =>  await unsuscribeUserProductFunction(false, false)}>
+                  <UnsubscribeIcon fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
+            }
+
+            {!userSubscribed.current?.noStock && 
+              <Tooltip title='Subscribe to stock'>
+                <IconButton aria-label="delete" size="medium" onClick={async () =>  await suscribeUserProductFunction(userSubscribed.current?.productBought, userSubscribed.current?.productSold, true)}>
+                  <InventoryIcon fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
+            }
+            {userSubscribed.current?.noStock && 
+              <Tooltip title='Unsubscribe to stock'>
+                <IconButton aria-label="delete" size="medium" onClick={async () =>  await unsuscribeUserProductFunction(userSubscribed.current?.productBought, userSubscribed.current?.productSold, false)}>
+                  <UnsubscribeIcon fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
             }
           </Grid>
           <StyledHeader variant="h5">

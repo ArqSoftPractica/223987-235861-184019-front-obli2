@@ -68,24 +68,19 @@ export async function getSuscribeUserProduct(productId, onSuccess = null, onErro
   try{
       const response = await axios.get(`/products/subscribe/${productId}`);
       onSuccess && onSuccess(response);
-      return true;
+      return response.data;
   } catch (error) {
       return false;
   }
 }
 
-export async function suscribeUserProduct(productId, onSuccess = null, onError = null) {
+export async function suscribeUserProduct(productId, productBought = false, productSold = false, noStock = false, onSuccess = null, onError = null) {
   try{
-      const response = await axios.post(`/products/subscribe/${productId}`);
-      onSuccess && onSuccess(response)
-  } catch (error) {
-      executeError(onError, error);
-  }
-}
-
-export async function unsuscribeUserProduct(productId, onSuccess = null, onError = null) {
-  try{
-      const response = await axios.delete(`/products/subscribe/${productId}`);
+      const response = await axios.post(`/products/subscribe/${productId}`, {
+        productBought,
+        productSold,
+        noStock
+      });
       onSuccess && onSuccess(response)
   } catch (error) {
       executeError(onError, error);
