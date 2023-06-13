@@ -9,6 +9,7 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
 } from '@mui/icons-material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import styled from 'styled-components';
 import Button from '@mui/material/Button';
 import CardMedia from '@mui/material/CardMedia';
@@ -129,6 +130,9 @@ function ProductsList(props) {
                         </CardContent>
                         {isAdmin && 
                         <StyledCardActions>
+                          <IconButton aria-label="delete" size="medium" onClick={() => navigate(`/viewProduct/${product.id}`)}>
+                            <VisibilityIcon fontSize="inherit" />
+                          </IconButton>
                           <IconButton
                               aria-label="edit"
                               size="medium"
