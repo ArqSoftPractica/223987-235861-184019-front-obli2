@@ -64,28 +64,30 @@ function ViewProduct() {
   }, []);
 
   async function fetchData() {
+    const response = await getSuscribeUserProduct(productId);
+    userSubscribed.current = response;
+    
     await getProduct(productId, (productResponse) => {
       const product = productResponse.data
       setFile({ name: productResponse.data.image });
       setProduct(product);
     }, (error) => setAlert({ type: 'error', message: error }));
-
-    const response = await getSuscribeUserProduct(productId);
-    userSubscribed.current = response;
   }
 
   const unsuscribeUserProductFunction = async (productBought = userSubscribed.current?.productBought, productSold = userSubscribed.current?.productSold, noStock = userSubscribed.current?.noStock) => {
-    setAlert({ type: 'success', message: "Unsuscribe successfully" });
     await suscribeUserProduct(productId, productBought, productSold, noStock);
     const response = await getSuscribeUserProduct(productId);
     userSubscribed.current = response;
+    if (response)
+      setAlert({ type: 'success', message: "Unsuscribe successfully" });
   }
 
   const suscribeUserProductFunction = async (productBought = userSubscribed.current?.productBought, productSold = userSubscribed.current?.productSold, noStock = userSubscribed.current?.noStock) => {
-    setAlert({ type: 'success', message: "Suscribe successfully" });
     await suscribeUserProduct(productId, productBought, productSold, noStock);
     const response = await getSuscribeUserProduct(productId);
     userSubscribed.current = response;
+    if (response)
+      setAlert({ type: 'success', message: "Suscribe successfully" });
   }
 
   return (
@@ -115,7 +117,7 @@ function ViewProduct() {
                 </IconButton>
               </Tooltip>
             }
-            {userSubscribed.current && userSubscribed.current.productBought && 
+            {userSubscribed.current && userSubscribed?.current.productBought && 
               <Tooltip title='Unsubscribe to purchases and sales'>
                 <IconButton aria-label="delete" size="medium" onClick={async () =>  await unsuscribeUserProductFunction(false, false)}>
                   <UnsubscribeIcon fontSize="inherit" />
