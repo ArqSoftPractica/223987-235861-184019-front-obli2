@@ -74,9 +74,7 @@ export async function registerViaLink(data, token, onSuccess = null, onError = n
 export async function isATokenValid() {
     try{
         const response = await axios.get(`/users/validToken`);
-        if(response.status === 204)
-            return true;
-        return false;
+        return response.status === 204
     } catch (error) {
         return false;
     }
