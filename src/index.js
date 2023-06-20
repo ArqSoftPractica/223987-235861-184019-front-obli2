@@ -21,6 +21,7 @@ import RequiereAdminUser from './components/RequiereAdminUser';
 import PurchasesList from './views/purchases/purchasesList';
 import CreatePurchase from './views/purchases/createPurchase';
 import CreateSale from './views/sales/createSale';
+import ViewProduct from './views/products/viewProduct';
 
 const router = createHashRouter([
   {
@@ -89,6 +90,15 @@ const router = createHashRouter([
         element: (
           <RequiereAdminUser>
             <EditProduct/>
+          </RequiereAdminUser>
+        ),
+        loader: productLoader,
+      },
+      {
+        path: '/viewProduct/:productId',
+        element: (
+          <RequiereAdminUser>
+            <ViewProduct/>
           </RequiereAdminUser>
         ),
         loader: productLoader,

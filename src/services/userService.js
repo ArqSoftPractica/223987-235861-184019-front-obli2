@@ -74,10 +74,18 @@ export async function registerViaLink(data, token, onSuccess = null, onError = n
 export async function isATokenValid() {
     try{
         const response = await axios.get(`/users/validToken`);
-        if(response.status === 204)
-            return true;
-        return false;
+        return response.status === 204
     } catch (error) {
         return false;
+    }
+}
+
+export async function sendReport(companyId, token, onSuccess = null, onError = null) {
+    try{
+        const companyId = getUser()?.companyId
+        const response = await axios.post(`/reports/${companyId}`);
+        onSuccess && onSuccess(response.data);
+    } catch (error) {
+        executeError(onError, error);
     }
 }
